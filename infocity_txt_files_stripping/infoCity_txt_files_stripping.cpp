@@ -9,12 +9,14 @@
 #include <algorithm>
 #include <boost\filesystem.hpp>
 #include <boost\filesystem\fstream.hpp>
+#include <boost\algorithm\string\replace.hpp>
 
 void getFileNames(std::string directoryName, std::vector<std::string>& fileNames);
 std::string readFile(std::string directoryName, std::string fileName);
-std::vector<std::string> parseFile(std::string& file);
+std::vector<std::string> parseFile(std::vector<std::string>& details, std::string& file);
 std::string findDetail(std::string& file, std::string searchQuery1, std::string searchQuery2, int offset);
 int stringOccurrenceCount(std::string const & str, std::string const & word);
+void findBusiness(std::vector<std::string>& details, std::string& file);
 
 int main()
 {
@@ -31,7 +33,8 @@ int main()
 
 	std::string file = readFile(directoryName, fileNames[0]);
 
-	std::vector<std::string> details = parseFile(file);
+	std::vector<std::string> details;
+	parseFile(details, file);
 
 	std::ofstream output("d:/test/out.txt");
 	for(std::vector<std::string>::iterator it = details.begin(); it != details.end(); ++it)
@@ -75,11 +78,8 @@ std::string readFile(std::string directoryName, std::string fileName)
 }
 
 // parsing files for specific content
-std::vector<std::string> parseFile(std::string& file)
+std::vector<std::string> parseFile(std::vector<std::string>& details, std::string& file)
 {
-	// vector where we store all information of the company
-	std::vector<std::string> details;
-
 	// finding full name
 	details.push_back(findDetail(file, "Polno ime:", "</H2>", 55));
 
@@ -123,7 +123,7 @@ std::vector<std::string> parseFile(std::string& file)
 	details.push_back(findDetail(file, "ID številka za DDV:", "</td>", 41));
 
 	//finding transaction numbers
-	size_t detailPosition = file.find("Transakcijski raèun:");
+	std::string::size_type detailPosition = file.find("Transakcijski raèun:");
 	std::string detail;
 	if(detailPosition != std::string::npos)
 		detail = file.substr(detailPosition + 29,  250);
@@ -160,6 +160,13 @@ std::vector<std::string> parseFile(std::string& file)
 
 	// finding origin of initial capital
 	details.push_back(findDetail(file, "Poreklo ustanovitvenega kapitala:", "</td>", 42));
+
+	// finding countries of initial capital
+	details.push_back(findDetail(file, "Države ustanovitvenega kapitala:", "</td>", 41));
+	
+	// finding business
+	findBusiness(details, file);
+
 
 	return details;
 }
@@ -199,4 +206,57 @@ int stringOccurrenceCount(std::string const & str, std::string const & word)
        }
        
        return count;
+}
+
+void findBusiness(std::vector<std::string>& details, std::string& file)
+{
+	std::string::size_type detailPosition;
+	std::string detail;
+	detail = "";
+	detailPosition = file.find("Dejavnosti");
+	if(detailPosition != std::string::npos)
+	{
+		detail = file.substr(detailPosition + 67,  500);
+		file = file.substr(detailPosition + 67);
+	}
+	detailPosition = detail.find("\">");
+	if(detailPosition != std::string::npos)
+	{
+		detail = detail.substr(detailPosition + 2);
+		file = file.substr(detailPosition + 2);
+	}
+	detailPosition = detail.find("</a>");
+	if(detailPosition != std::string::npos)
+	{
+		detail = detail.substr(0, detailPosition);
+		file = file.substr(detailPosition);
+	}
+	boost::algorithm::replace_all(detail, "&nbsp;&gt;&nbsp;", " -> ");
+	details.push_back(detail);
+	std::cout << detail << std::endl << std::endl;
+	while(file.find("</a></li><li><a href=\"http://www.infocity.si") != std::string::npos)
+	{
+		detail = "";
+		detailPosition = file.find("</a></li><li><a href=\"http://www.infocity.si");
+		if(detailPosition != std::string::npos)
+		{
+			detail = file.substr(detailPosition + 57,  500);
+			file = file.substr(detailPosition + 57);
+		}
+		detailPosition = detail.find("\">");
+		if(detailPosition != std::string::npos)
+		{
+			detail = detail.substr(detailPosition + 2);
+			file = file.substr(detailPosition + 2);
+		}
+		detailPosition = detail.find("</a>");
+		if(detailPosition != std::string::npos)
+		{
+			detail = detail.substr(0, detailPosition);
+			file = file.substr(detailPosition);
+		}
+		boost::algorithm::replace_all(detail, "&nbsp;&gt;&nbsp;", " -> ");
+		details.push_back(detail);
+		std::cout << detail << std::endl << std::endl;
+	}
 }
