@@ -34,7 +34,8 @@ int main()
 	std::ofstream output("d:/test/out.txt");
 	output << details[0] << "\n" 
 		<< details[1] << "\n" 
-		<< details[2];
+		<< details[2] << "\n" 
+		<< details[3];
 	output.close();
 
 	std::cin.get();
@@ -122,6 +123,21 @@ std::vector<std::string> parseFile(std::string& file)
 	{
 		//std::cout << address;
 		details.push_back(address);
+	}
+
+	// finding town
+	size_t townPosition = file.find("Naselje:");
+	std::string town;
+	if(townPosition != std::string::npos)
+		town = file.substr(townPosition+17,  80);
+
+	townPosition = town.find("</td>");
+	if(townPosition != std::string::npos)
+		town = town.substr(0, townPosition);
+	if(town.size() > 2)
+	{
+		std::cout << town;
+		details.push_back(town);
 	}
 
 	return details;
