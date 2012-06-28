@@ -148,6 +148,9 @@ std::vector<std::string> parseFile(std::string& file)
 
 	// finding date
 	details.push_back(findDetail(file, "Datum vpisa pri registrskem organu:", "</td>", 56));
+
+	// finding registration authority
+	details.push_back(findDetail(file, "Registrski organ:", "</td>", 38));
 	
 	return details;
 }
