@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <exception>
 #include <sstream>
+#include <locale>
 #include <boost\filesystem.hpp>
 #include <boost\filesystem\fstream.hpp>
 #include <boost\algorithm\string\replace.hpp>
@@ -24,6 +25,11 @@ void fileAfterFileRun(std::string directoryName);
 
 int main()
 {
+	// Create and install global locale
+    std::locale::global(std::locale(""));
+	// Make boost.filesystem use it
+	boost::filesystem::path::imbue(std::locale());
+
 	std::vector<std::string> fileNames;
 
 	std::string directoryName;
@@ -51,8 +57,9 @@ void fileAfterFileRun(std::string directoryName)
 		std::stringstream outfileName;
 		outfileName << "d:/out_0.txt";
 		boost::filesystem::path p(outfileName.str());
+		p.imbue(std::locale());
 		boost::filesystem::fstream output;
-		output.open(outfileName.str(), std::fstream::out);
+		output.open(outfileName.str(), boost::filesystem::fstream::out);
 
 		std::stringstream header;
 		header << "polno ime; Kratko ime; Naslov; Naselje; Pošta; Organizacijska oblika; "
@@ -61,7 +68,6 @@ void fileAfterFileRun(std::string directoryName)
 			<< "Registrski organ; Zaporedna številka vpisa; Vrsta lastnine; Poreklo ustanovitvenega kapitala; "
 			<< "Države ustanovitvenega kapitala;\n";
 		output << header.str();
-		output.close();
 
 		// transform directoryName to path
 		boost::filesystem::path path(directoryName);
@@ -83,22 +89,19 @@ void fileAfterFileRun(std::string directoryName)
 				outfileName.str(std::string()); // removes previous content
 				if(boost::filesystem::file_size(p) > 104857600) // size > 100 mb
 				{
+					output.close();
 					++i;
 					outfileName << "d:/out_" << i << ".txt";
-					output.open(outfileName.str(), std::fstream::out);
+					output.open(outfileName.str(), boost::filesystem::fstream::out);
 					output << header.str();
-					output.close();
 				}
-				else
-					outfileName << "d:/out_" << i << ".txt";
-				p =	outfileName.str();
-				output.open(outfileName.str(), std::ofstream::out | std::ofstream::app);
 				for(std::vector<std::string>::iterator it = details.begin(); it != details.end(); ++it)
 					output << *it << "; ";
 				output << std::endl;
-				output.close();
+				details.clear(); // remove all content of details
 			}
 		}
+		output.close();
 	} catch (std::exception const& e)
 	{
 		std::cout << "Huston, we have a problem: " <<  e.what() << std::endl;
@@ -128,7 +131,7 @@ void getFileNames(std::string directoryName, std::vector<std::string>& fileNames
 std::string readFile(std::string& directoryName, std::string& fileName)
 {
 	// using boost ifstream, but with std::ifstream would be the same
-	boost::filesystem::ifstream inputFile(directoryName + fileName);
+	boost::filesystem::ifstream inputFile(directoryName + fileName, boost::filesystem::ifstream::in);
 	if(!inputFile.good())
 		return "ERROR: cannot open file " + fileName;
 	else
