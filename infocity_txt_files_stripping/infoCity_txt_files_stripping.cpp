@@ -118,6 +118,9 @@ std::vector<std::string> parseFile(std::string& file)
 	//finding tax code
 	details.push_back(findDetail(file, "Davèna številka:", "</td>", 37));
 
+	//finding ID code for VAT
+	details.push_back(findDetail(file, "ID številka za DDV:", "</td>", 41));
+
 	return details;
 }
 
