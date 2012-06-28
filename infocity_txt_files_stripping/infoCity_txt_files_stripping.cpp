@@ -13,6 +13,7 @@
 void getFileNames(std::string directoryName, std::vector<std::string>& fileNames);
 std::string readFile(std::string directoryName, std::string fileName);
 std::vector<std::string> parseFile(std::string& file);
+std::string findDetail(std::string& file, std::string searchQuery1, std::string searchQuery2, int offset);
 
 int main()
 {
@@ -81,64 +82,36 @@ std::vector<std::string> parseFile(std::string& file)
 	std::vector<std::string> details;
 
 	// finding full name
-	size_t fullNamePosition = file.find("Polno ime:");
-	std::string fullName;
-	if(fullNamePosition != std::string::npos)
-		fullName = file.substr(fullNamePosition+55,  100);
-
-	fullNamePosition = fullName.find("</H2>");
-	if(fullNamePosition != std::string::npos)
-		fullName = fullName.substr(0, fullNamePosition);
-	if(fullName.size() > 2)
-	{
-		//std::cout << fullName;
-		details.push_back(fullName);
-	}
+	details.push_back(findDetail(file, "Polno ime:", "</H2>", 55));
 
 	// finding short name
-	size_t shortNamePosition = file.find("Kratko ime:");
-	std::string shortName;
-	if(shortNamePosition != std::string::npos)
-		shortName = file.substr(shortNamePosition+56,  80);
-
-	shortNamePosition = shortName.find("&nbsp;");
-	if(shortNamePosition != std::string::npos)
-		shortName = shortName.substr(0, shortNamePosition);
-	if(shortName.size() > 2)
-	{
-		//std::cout << shortName;
-		details.push_back(shortName);
-	}
+	details.push_back(findDetail(file, "Kratko ime:", "&nbsp;", 56));
 
 	// finding address
-	size_t addressPosition = file.find("Naslov:");
-	std::string address;
-	if(addressPosition != std::string::npos)
-		address = file.substr(addressPosition+16,  80);
-
-	addressPosition = address.find("</td>");
-	if(addressPosition != std::string::npos)
-		address = address.substr(0, addressPosition);
-	if(address.size() > 2)
-	{
-		//std::cout << address;
-		details.push_back(address);
-	}
+	details.push_back(findDetail(file, "Naslov:", "</td>", 16));
 
 	// finding town
-	size_t townPosition = file.find("Naselje:");
-	std::string town;
-	if(townPosition != std::string::npos)
-		town = file.substr(townPosition+17,  80);
-
-	townPosition = town.find("</td>");
-	if(townPosition != std::string::npos)
-		town = town.substr(0, townPosition);
-	if(town.size() > 2)
-	{
-		std::cout << town;
-		details.push_back(town);
-	}
+	details.push_back(findDetail(file, "Naselje:", "</td>", 17));
 
 	return details;
+}
+
+std::string findDetail(std::string& file, std::string searchQuery1, std::string searchQuery2, int offset)
+{
+	size_t detailPosition;
+	std::string detail;
+
+	// finding detail
+	detailPosition = file.find(searchQuery1);
+	if(detailPosition != std::string::npos)
+		detail = file.substr(detailPosition + offset,  100);
+
+	detailPosition = detail.find(searchQuery2);
+	if(detailPosition != std::string::npos)
+		detail = detail.substr(0, detailPosition);
+	if(detail.size() > 2)
+	{
+		//std::cout << detail;
+		return detail;
+	}
 }
