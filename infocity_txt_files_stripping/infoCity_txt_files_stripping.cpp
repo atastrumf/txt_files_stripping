@@ -115,6 +115,9 @@ std::vector<std::string> parseFile(std::string& file)
 	//finding registration number
 	details.push_back(findDetail(file, "Matièna številka:", "</td>", 38));
 
+	//finding tax code
+	details.push_back(findDetail(file, "Davèna številka:", "</td>", 37));
+
 	return details;
 }
 
