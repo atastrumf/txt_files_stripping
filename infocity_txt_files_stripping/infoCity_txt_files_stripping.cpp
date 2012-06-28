@@ -14,6 +14,7 @@ void getFileNames(std::string directoryName, std::vector<std::string>& fileNames
 std::string readFile(std::string directoryName, std::string fileName);
 std::vector<std::string> parseFile(std::string& file);
 std::string findDetail(std::string& file, std::string searchQuery1, std::string searchQuery2, int offset);
+int stringOccurrenceCount(std::string const & str, std::string const & word);
 
 int main()
 {
@@ -121,12 +122,36 @@ std::vector<std::string> parseFile(std::string& file)
 	//finding ID code for VAT
 	details.push_back(findDetail(file, "ID številka za DDV:", "</td>", 41));
 
+	//finding transaction numbers
+	size_t detailPosition = file.find("Transakcijski raèun:");
+	std::string detail;
+	if(detailPosition != std::string::npos)
+		detail = file.substr(detailPosition + 29,  250);
+
+	int number = stringOccurrenceCount(detail, "<br />");
+	
+	for(int i = 0; i <= number; ++i)
+	{
+		if(i == number)
+		{
+			details.push_back(findDetail(file, *(details.end()-1), "</td>", (details.end()-1)->size() + 6));
+			break;
+		}
+		if(i == 0)
+			details.push_back(findDetail(file, "Transakcijski raèun:", "<br />", 29));
+		else
+			details.push_back(findDetail(file, *(details.end()-1), "<br />", (details.end()-1)->size() + 6));
+	}
+	
+	
+
+
 	return details;
 }
 
 std::string findDetail(std::string& file, std::string searchQuery1, std::string searchQuery2, int offset)
 {
-	size_t detailPosition;
+	std::string::size_type detailPosition;
 	std::string detail;
 
 	// finding detail
@@ -140,4 +165,23 @@ std::string findDetail(std::string& file, std::string searchQuery1, std::string 
 
 	std::cout << detail << std::endl;
 	return detail;
+}
+
+int stringOccurrenceCount(std::string const & str, std::string const & word)
+{
+       int count(0);
+       std::string::size_type word_pos( 0 );
+       while ( word_pos!=std::string::npos )
+       {
+               word_pos = str.find(word, word_pos );
+               if ( word_pos != std::string::npos )
+               {
+                       ++count;
+
+         // start next search after this word 
+                       word_pos += word.length();
+               }
+       }
+       
+       return count;
 }
