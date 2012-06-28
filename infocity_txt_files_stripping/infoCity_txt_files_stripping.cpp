@@ -151,6 +151,9 @@ std::vector<std::string> parseFile(std::string& file)
 
 	// finding registration authority
 	details.push_back(findDetail(file, "Registrski organ:", "</td>", 38));
+
+	// finding ID number
+	details.push_back(findDetail(file, "Zaporedna številka vpisa:", "</td>", 34));
 	
 	return details;
 }
