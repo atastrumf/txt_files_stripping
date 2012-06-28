@@ -143,7 +143,8 @@ std::vector<std::string> parseFile(std::string& file)
 			details.push_back(findDetail(file, *(details.end()-1), "<br />", (details.end()-1)->size() + 6));
 	}
 	
-	
+	// finding founders
+	details.push_back(findDetail(file, "Ustanovitelji:", "</td>", 35));
 
 
 	return details;
