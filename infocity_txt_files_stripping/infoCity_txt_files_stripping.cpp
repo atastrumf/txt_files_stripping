@@ -33,13 +33,8 @@ int main()
 	std::vector<std::string> details = parseFile(file);
 
 	std::ofstream output("d:/test/out.txt");
-	output << details[0] << "\n" 
-		<< details[1] << "\n" 
-		<< details[2] << "\n" 
-		<< details[3] << "\n" 
-		<< details[4] << "\n" 
-		<< details[5] << "\n" 
-		<< details[6];
+	for(std::vector<std::string>::iterator it = details.begin(); it != details.end(); ++it)
+		output << *it << std::endl;
 	output.close();
 
 	std::cin.get();
@@ -102,8 +97,11 @@ std::vector<std::string> parseFile(std::string& file)
 	//finding form of organization
 	details.push_back(findDetail(file, "Organizacijska oblika:", "</td>", 43));
 
-	//finding number of employed
+	//finding number of employees
 	details.push_back(findDetail(file, "Število zaposlenih:", "</td>", 40));
+
+	//finding phone number
+	details.push_back(findDetail(file, "Telefon:", "</td>", 29));
 
 	return details;
 }
