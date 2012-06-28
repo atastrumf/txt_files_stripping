@@ -106,6 +106,9 @@ std::vector<std::string> parseFile(std::string& file)
 	//finding fax number
 	details.push_back(findDetail(file, "Fax:", "</td>", 25));
 
+	//finding mobile phone number
+	details.push_back(findDetail(file, "Gsm:", "</td>", 25));
+
 	return details;
 }
 
@@ -122,9 +125,7 @@ std::string findDetail(std::string& file, std::string searchQuery1, std::string 
 	detailPosition = detail.find(searchQuery2);
 	if(detailPosition != std::string::npos)
 		detail = detail.substr(0, detailPosition);
-	if(detail.size() > 2)
-	{
-		std::cout << detail << std::endl;
-		return detail;
-	}
+
+	std::cout << detail << std::endl;
+	return detail;
 }
