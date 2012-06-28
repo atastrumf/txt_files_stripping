@@ -32,7 +32,7 @@ int main()
 	std::vector<std::string> details = parseFile(file);
 
 	std::ofstream output("d:/test/out.txt");
-	output << details[0];
+	output << details[0] << "\n" << details[1];
 	output.close();
 
 	std::cin.get();
@@ -88,8 +88,23 @@ std::vector<std::string> parseFile(std::string& file)
 		fullName = fullName.substr(0, fullNamePosition);
 	if(fullName.size() > 2)
 	{
-		std::cout << fullName;
+		//std::cout << fullName;
 		details.push_back(fullName);
+	}
+
+	// finding short name
+	size_t shortNamePosition = file.find("Kratko ime:");
+	std::string shortName;
+	if(shortNamePosition != std::string::npos)
+		shortName = file.substr(shortNamePosition+56,  80);
+
+	shortNamePosition = shortName.find("&nbsp;");
+	if(shortNamePosition != std::string::npos)
+		shortName = shortName.substr(0, shortNamePosition);
+	if(shortName.size() > 2)
+	{
+		std::cout << shortName;
+		details.push_back(shortName);
 	}
 
 
