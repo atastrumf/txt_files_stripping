@@ -109,6 +109,9 @@ std::vector<std::string> parseFile(std::string& file)
 	//finding mobile phone number
 	details.push_back(findDetail(file, "Gsm:", "</td>", 25));
 
+	//finding website
+	details.push_back(findDetail(file, "Splet:", "\">", 52));
+
 	return details;
 }
 
