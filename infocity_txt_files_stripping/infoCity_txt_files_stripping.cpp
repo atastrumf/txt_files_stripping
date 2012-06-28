@@ -38,7 +38,8 @@ int main()
 		<< details[2] << "\n" 
 		<< details[3] << "\n" 
 		<< details[4] << "\n" 
-		<< details[5];
+		<< details[5] << "\n" 
+		<< details[6];
 	output.close();
 
 	std::cin.get();
@@ -100,6 +101,9 @@ std::vector<std::string> parseFile(std::string& file)
 
 	//finding form of organization
 	details.push_back(findDetail(file, "Organizacijska oblika:", "</td>", 43));
+
+	//finding number of employed
+	details.push_back(findDetail(file, "Število zaposlenih:", "</td>", 40));
 
 	return details;
 }
