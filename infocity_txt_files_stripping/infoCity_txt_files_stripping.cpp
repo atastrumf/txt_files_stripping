@@ -167,7 +167,10 @@ std::vector<std::string> parseFile(std::vector<std::string>& details, std::strin
 	// finding business
 	findBusiness(details, file);
 
-
+	// finding Standard Classification of Activities
+	details.push_back(findDetail(file, "<ul class=\"dc_ul\"><li><b>", "</b>", 25));
+	
+	
 	return details;
 }
 
