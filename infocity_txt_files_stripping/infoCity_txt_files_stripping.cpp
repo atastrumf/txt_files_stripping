@@ -6,18 +6,20 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include <boost\filesystem.hpp>
 #include <boost\filesystem\fstream.hpp>
 
 void getFileNames(std::string directoryName, std::vector<std::string>& fileNames);
 std::string readFile(std::string directoryName, std::string fileName);
+std::vector<std::string> parseFile(std::string& file);
 
 int main()
 {
 	std::vector<std::string> fileNames;
 
 	std::string directoryName;
-	std::cout << "Enter directory path: ";
+	//std::cout << "Enter directory path: ";
 	//std::cin >> directoryName;
 	directoryName = "d:/test/";
 	getFileNames(directoryName, fileNames);
@@ -26,6 +28,12 @@ int main()
 		std::cout << *it << std::endl;
 
 	std::string file = readFile(directoryName, fileNames[0]);
+
+	std::vector<std::string> details = parseFile(file);
+
+	std::ofstream output("d:/test/out.txt");
+	output << details[0];
+	output.close();
 
 	std::cin.get();
 	return 0;
@@ -61,4 +69,29 @@ std::string readFile(std::string directoryName, std::string fileName)
 		std::string file(std::istreambuf_iterator<char>( inputFile ), (std::istreambuf_iterator<char>()));
 		return file;
 	}
+}
+
+// parsing files for specific content
+std::vector<std::string> parseFile(std::string& file)
+{
+	// vector where we store all information of the company
+	std::vector<std::string> details;
+
+	// finding full name
+	size_t fullNamePosition = file.find("Polno ime:");
+	std::string fullName;
+	if(fullNamePosition != std::string::npos)
+		fullName = file.substr(fullNamePosition+55,  100);
+
+	fullNamePosition = fullName.find("</H2>");
+	if(fullNamePosition != std::string::npos)
+		fullName = fullName.substr(0, fullNamePosition);
+	if(fullName.size() > 2)
+	{
+		std::cout << fullName;
+		details.push_back(fullName);
+	}
+
+
+	return details;
 }
