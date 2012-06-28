@@ -36,7 +36,8 @@ int main()
 	output << details[0] << "\n" 
 		<< details[1] << "\n" 
 		<< details[2] << "\n" 
-		<< details[3];
+		<< details[3] << "\n" 
+		<< details[4];
 	output.close();
 
 	std::cin.get();
@@ -93,6 +94,9 @@ std::vector<std::string> parseFile(std::string& file)
 	// finding town
 	details.push_back(findDetail(file, "Naselje:", "</td>", 17));
 
+	// finding post office
+	details.push_back(findDetail(file, "Pošta:", "</td>", 27));
+
 	return details;
 }
 
@@ -111,7 +115,7 @@ std::string findDetail(std::string& file, std::string searchQuery1, std::string 
 		detail = detail.substr(0, detailPosition);
 	if(detail.size() > 2)
 	{
-		//std::cout << detail;
+		std::cout << detail << std::endl;
 		return detail;
 	}
 }
