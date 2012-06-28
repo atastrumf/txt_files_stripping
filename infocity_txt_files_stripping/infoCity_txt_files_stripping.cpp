@@ -32,7 +32,9 @@ int main()
 	std::vector<std::string> details = parseFile(file);
 
 	std::ofstream output("d:/test/out.txt");
-	output << details[0] << "\n" << details[1];
+	output << details[0] << "\n" 
+		<< details[1] << "\n" 
+		<< details[2];
 	output.close();
 
 	std::cin.get();
@@ -103,10 +105,24 @@ std::vector<std::string> parseFile(std::string& file)
 		shortName = shortName.substr(0, shortNamePosition);
 	if(shortName.size() > 2)
 	{
-		std::cout << shortName;
+		//std::cout << shortName;
 		details.push_back(shortName);
 	}
 
+	// finding address
+	size_t addressPosition = file.find("Naslov:");
+	std::string address;
+	if(addressPosition != std::string::npos)
+		address = file.substr(addressPosition+16,  80);
+
+	addressPosition = address.find("</td>");
+	if(addressPosition != std::string::npos)
+		address = address.substr(0, addressPosition);
+	if(address.size() > 2)
+	{
+		//std::cout << address;
+		details.push_back(address);
+	}
 
 	return details;
 }
