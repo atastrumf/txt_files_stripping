@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include <exception>
+#include <sstream>
 #include <boost\filesystem.hpp>
 #include <boost\filesystem\fstream.hpp>
 #include <boost\algorithm\string\replace.hpp>
@@ -26,14 +27,15 @@ int main()
 	std::vector<std::string> fileNames;
 
 	std::string directoryName;
-	//std::cout << "Enter directory path: ";
-	//std::cin >> directoryName;
-	directoryName = "d:/test/";
+	std::cout << "Enter directory path: ";
+	std::cin >> directoryName;
+	//directoryName = "d:/test/";
 	
 	std::cout << "Parsing started!\n";
 	fileAfterFileRun(directoryName);
 	std::cout << "\n---------\nParsing finished!!!!\n---------\n";
 
+	std::cin.get();
 	std::cin.get();
 	return 0;
 }
@@ -45,13 +47,21 @@ void fileAfterFileRun(std::string directoryName)
 	{
 		std::vector<std::string> details;
 		std::string file;
-		std::ofstream output("d:/out.txt");
-		output.clear();
-		output << "polno ime; Kratko ime; Naslov; Naselje; Pošta; Organizacijska oblika; "
+		int i = 0;
+		std::stringstream outfileName;
+		outfileName << "d:/out_0.txt";
+		boost::filesystem::path p(outfileName.str());
+		boost::filesystem::fstream output;
+		output.open(outfileName.str(), std::fstream::out);
+
+		std::stringstream header;
+		header << "polno ime; Kratko ime; Naslov; Naselje; Pošta; Organizacijska oblika; "
 			<< "Število zaposlenih; Telefon; Fax; Gsm; Splet; Matièna številka; Davèna številka; "
 			<< "ID številka za DDV; Transakcijski raèun; Ustanovitelji; Datum vpisa pri registrskem organu; "
 			<< "Registrski organ; Zaporedna številka vpisa; Vrsta lastnine; Poreklo ustanovitvenega kapitala; "
-			<< "Države ustanovitvenega kapitala;";
+			<< "Države ustanovitvenega kapitala;\n";
+		output << header.str();
+		output.close();
 
 		// transform directoryName to path
 		boost::filesystem::path path(directoryName);
@@ -70,9 +80,22 @@ void fileAfterFileRun(std::string directoryName)
 
 				parseFile(details, file);
 
-				output.open("d:/out.txt", std::ofstream::app);
+				outfileName.str(std::string()); // removes previous content
+				if(boost::filesystem::file_size(p) > 104857600) // size > 100 mb
+				{
+					++i;
+					outfileName << "d:/out_" << i << ".txt";
+					output.open(outfileName.str(), std::fstream::out);
+					output << header.str();
+					output.close();
+				}
+				else
+					outfileName << "d:/out_" << i << ".txt";
+				p =	outfileName.str();
+				output.open(outfileName.str(), std::ofstream::out | std::ofstream::app);
 				for(std::vector<std::string>::iterator it = details.begin(); it != details.end(); ++it)
-					output << *it << '; ';
+					output << *it << "; ";
+				output << std::endl;
 				output.close();
 			}
 		}
@@ -213,7 +236,7 @@ std::vector<std::string> parseFile(std::vector<std::string>& details, std::strin
 	{
 		std::cout << "Huston, we have a problem: " <<  e.what() << std::endl;
 	}
-	
+
 	return details;
 }
 
