@@ -158,6 +158,9 @@ std::vector<std::string> parseFile(std::string& file)
 	// finding type of property
 	details.push_back(findDetail(file, "Vrsta lastnine:", "</td>", 24));
 
+	// finding origin of initial capital
+	details.push_back(findDetail(file, "Poreklo ustanovitvenega kapitala:", "</td>", 42));
+
 	return details;
 }
 
