@@ -154,7 +154,10 @@ std::vector<std::string> parseFile(std::string& file)
 
 	// finding ID number
 	details.push_back(findDetail(file, "Zaporedna številka vpisa:", "</td>", 34));
-	
+
+	// finding type of property
+	details.push_back(findDetail(file, "Vrsta lastnine:", "</td>", 24));
+
 	return details;
 }
 
