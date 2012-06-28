@@ -146,7 +146,9 @@ std::vector<std::string> parseFile(std::string& file)
 	// finding founders
 	details.push_back(findDetail(file, "Ustanovitelji:", "</td>", 35));
 
-
+	// finding date
+	details.push_back(findDetail(file, "Datum vpisa pri registrskem organu:", "</td>", 56));
+	
 	return details;
 }
 
