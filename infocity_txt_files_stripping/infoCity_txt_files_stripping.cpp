@@ -103,6 +103,9 @@ std::vector<std::string> parseFile(std::string& file)
 	//finding phone number
 	details.push_back(findDetail(file, "Telefon:", "</td>", 29));
 
+	//finding fax number
+	details.push_back(findDetail(file, "Fax:", "</td>", 25));
+
 	return details;
 }
 
