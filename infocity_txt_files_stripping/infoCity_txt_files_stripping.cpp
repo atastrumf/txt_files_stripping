@@ -112,6 +112,9 @@ std::vector<std::string> parseFile(std::string& file)
 	//finding website
 	details.push_back(findDetail(file, "Splet:", "\">", 52));
 
+	//finding registration number
+	details.push_back(findDetail(file, "Matièna številka:", "</td>", 38));
+
 	return details;
 }
 
