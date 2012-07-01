@@ -1,4 +1,4 @@
-// infoCity_txt_files_stripping.cpp : Defines the entry point for the console application.
+Ôªø// infoCity_txt_files_stripping.cpp : Defines the entry point for the console application.
 //
 
 #include "stdafx.h"
@@ -26,12 +26,11 @@ void fileAfterFileRun(std::string directoryName);
 int main()
 {
 	// Create and install global locale
-    std::locale::global(std::locale(""));
+    //std::locale::global(std::locale(""));
 	// Make boost.filesystem use it
-	boost::filesystem::path::imbue(std::locale());
+	//boost::filesystem::path::imbue(std::locale());
 
 	std::vector<std::string> fileNames;
-
 	std::string directoryName;
 	std::cout << "Enter directory path: ";
 	std::cin >> directoryName;
@@ -60,13 +59,12 @@ void fileAfterFileRun(std::string directoryName)
 		p.imbue(std::locale());
 		boost::filesystem::fstream output;
 		output.open(outfileName.str(), boost::filesystem::fstream::out);
-
 		std::stringstream header;
-		header << "polno ime; Kratko ime; Naslov; Naselje; Poöta; Organizacijska oblika; "
-			<< "ätevilo zaposlenih; Telefon; Fax; Gsm; Splet; MatiËna ötevilka; DavËna ötevilka; "
-			<< "ID ötevilka za DDV; Transakcijski raËun; Ustanovitelji; Datum vpisa pri registrskem organu; "
-			<< "Registrski organ; Zaporedna ötevilka vpisa; Vrsta lastnine; Poreklo ustanovitvenega kapitala; "
-			<< "Drûave ustanovitvenega kapitala;\n";
+		header << "polno ime; Kratko ime; Naslov; Naselje; Po≈°ta; Organizacijska oblika; "
+			<< "≈†tevilo zaposlenih; Telefon; Fax; Gsm; Splet; Matiƒçna ≈°tevilka; Davƒçna ≈°tevilka; "
+			<< "ID ≈°tevilka za DDV; Transakcijski raƒçun; Ustanovitelji; Datum vpisa pri registrskem organu; "
+			<< "Registrski organ; Zaporedna ≈°tevilka vpisa; Vrsta lastnine; Poreklo ustanovitvenega kapitala; "
+			<< "Dr≈æave ustanovitvenega kapitala;\n";
 		output << header.str();
 
 		// transform directoryName to path
@@ -95,6 +93,7 @@ void fileAfterFileRun(std::string directoryName)
 					output.open(outfileName.str(), boost::filesystem::fstream::out);
 					output << header.str();
 				}
+				output << fileName << "    ";
 				for(std::vector<std::string>::iterator it = details.begin(); it != details.end(); ++it)
 					output << *it << "; ";
 				output << std::endl;
@@ -159,13 +158,13 @@ std::vector<std::string> parseFile(std::vector<std::string>& details, std::strin
 		details.push_back(findDetail(file, "Naselje:", "</td>", 17));
 
 		// finding post office
-		details.push_back(findDetail(file, "Poöta:", "</td>", 27));
+		details.push_back(findDetail(file, "Po≈°ta:", "</td>", 27));
 
 		//finding form of organization
 		details.push_back(findDetail(file, "Organizacijska oblika:", "</td>", 43));
 
 		//finding number of employees
-		details.push_back(findDetail(file, "ätevilo zaposlenih:", "</td>", 40));
+		details.push_back(findDetail(file, "≈†tevilo zaposlenih:", "</td>", 40));
 
 		//finding phone number
 		details.push_back(findDetail(file, "Telefon:", "</td>", 29));
@@ -180,16 +179,16 @@ std::vector<std::string> parseFile(std::vector<std::string>& details, std::strin
 		details.push_back(findDetail(file, "Splet:", "\">", 52));
 
 		//finding registration number
-		details.push_back(findDetail(file, "MatiËna ötevilka:", "</td>", 38));
+		details.push_back(findDetail(file, "Matiƒçna ≈°tevilka:", "</td>", 38));
 
 		//finding tax code
-		details.push_back(findDetail(file, "DavËna ötevilka:", "</td>", 37));
+		details.push_back(findDetail(file, "Davƒçna ≈°tevilka:", "</td>", 37));
 
 		//finding ID code for VAT
-		details.push_back(findDetail(file, "ID ötevilka za DDV:", "</td>", 41));
+		details.push_back(findDetail(file, "ID ≈°tevilka za DDV:", "</td>", 41));
 
 		//finding transaction numbers
-		std::string::size_type detailPosition = file.find("Transakcijski raËun:");
+		std::string::size_type detailPosition = file.find("Transakcijski raƒçun:");
 		std::string detail;
 		if(detailPosition != std::string::npos)
 			detail = file.substr(detailPosition + 29,  250);
@@ -204,7 +203,7 @@ std::vector<std::string> parseFile(std::vector<std::string>& details, std::strin
 				break;
 			}
 			if(i == 0)
-				details.push_back(findDetail(file, "Transakcijski raËun:", "<br />", 29));
+				details.push_back(findDetail(file, "Transakcijski raƒçun:", "<br />", 29));
 			else
 				details.push_back(findDetail(file, *(details.end()-1), "<br />", (details.end()-1)->size() + 6));
 		}
@@ -219,7 +218,7 @@ std::vector<std::string> parseFile(std::vector<std::string>& details, std::strin
 		details.push_back(findDetail(file, "Registrski organ:", "</td>", 38));
 
 		// finding ID number
-		details.push_back(findDetail(file, "Zaporedna ötevilka vpisa:", "</td>", 34));
+		details.push_back(findDetail(file, "Zaporedna ≈°tevilka vpisa:", "</td>", 34));
 
 		// finding type of property
 		details.push_back(findDetail(file, "Vrsta lastnine:", "</td>", 24));
@@ -228,7 +227,7 @@ std::vector<std::string> parseFile(std::vector<std::string>& details, std::strin
 		details.push_back(findDetail(file, "Poreklo ustanovitvenega kapitala:", "</td>", 42));
 
 		// finding countries of initial capital
-		details.push_back(findDetail(file, "Drûave ustanovitvenega kapitala:", "</td>", 41));
+		details.push_back(findDetail(file, "Dr≈æave ustanovitvenega kapitala:", "</td>", 41));
 	
 		// finding business
 		findBusiness(details, file);
